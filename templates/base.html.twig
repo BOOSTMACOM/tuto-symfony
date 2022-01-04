@@ -9,11 +9,16 @@
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
 
+    </head>
+    <body>
+        <header>
+            {% include "partials/nav.html.twig" %}
+        </header>
+
+        {% block body %}{% endblock %}
+
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
     </body>
 </html>

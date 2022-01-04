@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello BlogController!{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Bienvenue sur le blog</h1>
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quo blanditiis illum facere, et alias animi commodi! Fuga rerum nemo excepturi culpa accusantium aut eius ratione laudantium? Nihil repudiandae dolores facilis.</p>
+        </div>
+    </div>
+
+    {% if articles|length > 0 %}
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4">
+        {% for article in articles %}
+            <div class="col">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2>{{ article.title }}</h2>
+                        <p>{{ article.content|u.truncate(200, '...', false)  }}</p>
+                        <small>{{ article.publishedAt|date("d/m/Y") }}</small>
+                        <a href="{{ path('blog_show', {'slug': article.slug }) }}">Lire la suite</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Aucun article pour le moment... Je suis désolé, mais genre vraiment...</p>  
+    {% endif %}
+
+
+</div>
+{% endblock %}
