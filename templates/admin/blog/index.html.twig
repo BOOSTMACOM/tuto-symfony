@@ -24,6 +24,7 @@
                                 <th>Title</th>
                                 <th>PublishedAt</th>
                                 <th>Slug</th>
+                                <th>Catégorie</th>
                                 <th>actions</th>
                             </tr>
                         </thead>
@@ -34,6 +35,11 @@
                                 <td>{{ article.title }}</td>
                                 <td>{{ article.publishedAt ? article.publishedAt|date('d-m-Y H:i:s') : '' }}</td>
                                 <td>{{ article.slug }}</td>
+                                <td>
+                                    {% if article.category %}
+                                        <span class="badge rounded-pill bg-info">{{ article.category.title }}</span>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <a href="{{ path('admin_blog_show', {'id': article.id}) }}" class="btn btn-primary">show</a>
                                     <a href="{{ path('admin_blog_edit', {'id': article.id}) }}" class="btn btn-secondary">edit</a>

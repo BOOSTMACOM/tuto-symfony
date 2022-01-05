@@ -10,6 +10,8 @@ class EditArticleDTO
 
     private $content;
 
+    private $category = null;
+
     /**
      * Get the value of id
      */ 
@@ -71,4 +73,24 @@ class EditArticleDTO
     }
 
 
+
+    /**
+     * Get the value of category
+     */ 
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * Set the value of category
+     *
+     * @return  self
+     */ 
+    public function setCategory($category = null)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
 }

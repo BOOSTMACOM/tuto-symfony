@@ -26,7 +26,8 @@ class ArticleManagerService
         $dto = (new EditArticleDTO())
         ->setId($article->getId())
         ->setTitle($article->getTitle())
-        ->setContent($article->getContent());
+        ->setContent($article->getContent())
+        ->setCategory($article->getCategory());
 
         return $dto;
     }
@@ -36,7 +37,8 @@ class ArticleManagerService
         $article = (new Article())
         ->setTitle($dto->getTitle())
         ->setContent($dto->getContent())
-        ->setPublishedAt(new \DateTime());
+        ->setPublishedAt(new \DateTime())
+        ->setCategory($dto->getCategory());
 
         $this->entityManager->persist($this->slugify($article));
         $this->entityManager->flush();
@@ -47,7 +49,8 @@ class ArticleManagerService
         $article = $this->repo->find($dto->getId());
         $article
             ->setTitle($dto->getTitle())
-            ->setContent($dto->getContent());
+            ->setContent($dto->getContent())
+            ->setCategory($dto->getCategory());
             
         $article = $this->slugify($article);
         $this->entityManager->flush();
