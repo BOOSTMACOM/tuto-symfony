@@ -1,0 +1,56 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Article index{% endblock %}
+
+{% block body %}
+<div class="container p-4">
+    <div class="row justify-content-around align-content-center">
+        <div class="col">
+            <h1>Article index</h1>
+        </div>
+        <div class="col-auto">
+            <a href="{{ path('admin_blog_new') }}" class="btn btn-success">Create new</a>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Title</th>
+                                <th>PublishedAt</th>
+                                <th>Slug</th>
+                                <th>actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for article in articles %}
+                            <tr>
+                                <td>{{ article.id }}</td>
+                                <td>{{ article.title }}</td>
+                                <td>{{ article.publishedAt ? article.publishedAt|date('d-m-Y H:i:s') : '' }}</td>
+                                <td>{{ article.slug }}</td>
+                                <td>
+                                    <a href="{{ path('admin_blog_show', {'id': article.id}) }}" class="btn btn-primary">show</a>
+                                    <a href="{{ path('admin_blog_edit', {'id': article.id}) }}" class="btn btn-secondary">edit</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6">no records found</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
