@@ -2,99 +2,102 @@
 
 namespace App\Controller\Admin;
 
+use App\DTOs\EditArticleDTO;
 use App\Entity\Article;
 use App\Form\ArticleType;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\ArticleRepository;
+use App\Services\ArticleManagerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * @Route("/admin/blog")
+ */
 class BlogController extends AbstractController
 {
+    private ArticleManagerService $articleManager;
 
-    private ManagerRegistry $doctrine;
-
-    public function __construct(ManagerRegistry $doctrine)
+    public function __construct(ArticleManagerService $articleManager)
     {
-        $this->doctrine = $doctrine;
+        $this->articleManager = $articleManager;
     }
 
     /**
-     * @Route("/admin/blog", name="admin_blog")
+     * @Route("/", name="admin_blog_index", methods={"GET"})
      */
-    public function index(): Response
+    public function index(ArticleRepository $articleRepository): Response
     {
-        $articles = $this->doctrine->getRepository(Article::class)->findAll();
-
         return $this->render('admin/blog/index.html.twig', [
-            'articles' => $articles,
+            'articles' => $articleRepository->findBy([], [
+                'id' => 'DESC'
+            ]),
         ]);
     }
 
     /**
-     * @Route("/admin/blog/edit/{id}", name="admin_blog_edit")
-     */
-    public function edit(Article $article, Request $request): Response
-    {
-
-        // Construction du Formulaire grâce au Builder
-        $form = $this->createForm(ArticleType::class, $article);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid())
-        {
-            $slugger = new AsciiSlugger();
-            $title = $article->getTitle();
-            $article->setSlug(strtolower($slugger->slug($title)));
-
-            //$doctrine->getManager()->persist($article);
-            $this->doctrine->getManager()->flush();
-        }
-
-        return $this->render('admin/blog/edit.html.twig',[
-            'form' => $form->createView() // on genère une "Vue" du formulaire pour l'affichage dans la Vue
-        ]);
-    }
-
-    /**
-     * @Route("/admin/blog/new", name="admin_blog_new")
+     * @Route("/new", name="admin_blog_new", methods={"GET", "POST"})
      */
     public function new(Request $request): Response
     {
-
-        // Construction du Formulaire grâce au Builder
-        $article = new Article();
+        $article = new EditArticleDTO();
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
-            $slugger = new AsciiSlugger();
-            $title = $article->getTitle();
-            $article->setSlug(strtolower($slugger->slug($title)));
-            $article->setPublishedAt(new \DateTime());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->articleManager->insert($article);
 
-            $this->doctrine->getManager()->persist($article);
-            $this->doctrine->getManager()->flush();
-
-            return $this->redirectToRoute('admin_blog');
+            return $this->redirectToRoute('admin_blog_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('admin/blog/new.html.twig',[
-            'form' => $form->createView() // on genère une "Vue" du formulaire pour l'affichage dans la Vue
+        return $this->renderForm('admin/blog/new.html.twig', [
+            'article' => $article,
+            'form' => $form,
         ]);
     }
 
-     /**
-     * @Route("/admin/blog/delete/{id}", name="admin_blog_delete")
+    /**
+     * @Route("/{id}", name="admin_blog_show", methods={"GET"})
      */
-    public function delete(Article $article)
+    public function show(Article $article): Response
     {
-        $this->doctrine->getManager()->remove($article);
-        $this->doctrine->getManager()->flush();
+        return $this->render('admin/blog/show.html.twig', [
+            'article' => $article,
+        ]);
+    }
 
-        return $this->redirectToRoute('admin_blog');
+    /**
+     * @Route("/{id}/edit", name="admin_blog_edit", methods={"GET", "POST"})
+     */
+    public function edit(Request $request, int $id): Response
+    {
+        $dto = $this->articleManager->createDtoFromEntity($id);
+        $form = $this->createForm(ArticleType::class, $dto);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->articleManager->update($dto);
+
+            return $this->redirectToRoute('admin_blog_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('admin/blog/edit.html.twig', [
+            'article' => $dto,
+            'form' => $form,
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", name="admin_blog_delete", methods={"POST"})
+     */
+    public function delete(Request $request, int $id): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$id, $request->request->get('_token'))) {
+            $this->articleManager->delete($id);
+        }
+
+        return $this->redirectToRoute('admin_blog_index', [], Response::HTTP_SEE_OTHER);
     }
 }

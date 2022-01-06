@@ -1,8 +1,11 @@
 {% extends 'admin/base.html.twig' %}
 
+{% block title %}New Article{% endblock %}
+
 {% block body %}
-<div class="container">
-    <h1>Rédiger un article</h1>
-    {% include "admin/blog/_form.html.twig" %}
-</div>
+    <h1>Create new Article</h1>
+
+    {{ include('admin/blog/_form.html.twig') }}
+
+    <a href="{{ path('admin_blog_index') }}">back to list</a>
 {% endblock %}

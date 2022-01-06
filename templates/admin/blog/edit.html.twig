@@ -1,8 +1,13 @@
 {% extends 'admin/base.html.twig' %}
 
+{% block title %}Edit Article{% endblock %}
+
 {% block body %}
-<div class="container">
-    <h1>Modifier un article</h1>
-    {% include "admin/blog/_form.html.twig" %}
-</div>
+    <h1>Edit Article</h1>
+
+    {{ include('admin/blog/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('admin_blog_index') }}">back to list</a>
+
+    {{ include('admin/blog/_delete_form.html.twig') }}
 {% endblock %}

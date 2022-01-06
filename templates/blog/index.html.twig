@@ -12,12 +12,12 @@
     </div>
 
     {% if articles|length > 0 %}
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4">
+    <div class="row row-cols-1 row-cols-md-3">
         {% for article in articles %}
             <div class="col">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h2>{{ article.title }}</h2>
+                        <h2 class="h3" style="height: 67px; overflow: hidden;">{{ article.title|u.truncate(50, '...') }}</h2>
                         <p>{{ article.content|u.truncate(200, '...', false)  }}</p>
                         <small>{{ article.publishedAt|date("d/m/Y") }}</small>
                         <a href="{{ path('blog_show', {'slug': article.slug }) }}">Lire la suite</a>
