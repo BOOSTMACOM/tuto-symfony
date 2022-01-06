@@ -1,11 +1,16 @@
 <?php
 
 namespace App\DTOs;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class EditArticleDTO
 {
     private $id = null;
 
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(max=70)
+     */
     private $title;
 
     private $content;
