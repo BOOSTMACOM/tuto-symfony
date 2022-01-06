@@ -19,6 +19,33 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
+    /**
+     * @return Article[]
+     * Permet de récuperer tous les articles dont le titre
+     * commence par "Top"
+     */
+    public function findByTitleBeginWithTop()
+    {
+        return $this->createQueryBuilder('a')
+            ->where("a.title LIKE 'Top%'")
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Article[]
+     */
+    public function findBySearch(string $search)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.title LIKE :search')
+            ->orWhere('a.content LIKE :search')
+            ->setParameter('search', '%'.$search.'%')
+            ->orderBy('a.id','DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Article[] Returns an array of Article objects
     //  */
